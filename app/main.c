@@ -16,29 +16,71 @@
 #include <periph/gpio.h>
 #include <periph/i2c.h>
 
+#include "lib.h"
 uint32_t dolength(uint8_t* b1, uint8_t* b2, uint32_t length);
+extern void delay50u(void);
 
-#define NLEDS 300
 uint8_t pbuf1 [NLEDS*3];
 uint8_t pbuf2 [NLEDS*3];
 
-typedef struct __attribute__((packed)) {
-  uint8_t g;
-  uint8_t r;
-  uint8_t b;
-} led_t;
+
 
 led_t c_black = {.r = 0, .g = 0, .b = 0};
-led_t c_chk = {.g = 0xFF, .r = 0x00, .b = 0x55};
+led_t c_chk = {.g = 0x00, .r = 0xff, .b = 0x00};
 
 led_t *lbuf1 = (led_t *) &pbuf1[0];
 led_t *lbuf2 = (led_t *) &pbuf2[0];
 
 void send_udp(char *addr_str, uint16_t port, uint8_t *data, uint16_t datalen);
 void process_next_frame(void);
+inline void delay_45(void)  __attribute__((always_inline));
+inline void delay_45(void)
+{
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
 
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+}
+inline void delay_40(void)  __attribute__((always_inline));
+inline void delay_40(void)
+{
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+
+  //delay_jiffy(20);
+}
+extern void nmain(void);
 int main(void)
 {
+  gpio_init(GPIO_PIN(0,18), GPIO_OUT);
+  gpio_init(GPIO_PIN(0,25), GPIO_OUT);
+    nmain();
+    #if 0
     //Clear the arrays to chk
     for (uint32_t i = 0; i < NLEDS; i++) {
       lbuf1[i] = c_chk;
@@ -55,6 +97,7 @@ int main(void)
       while ((xtimer_now().ticks32 - then) < 2);
     }
     return 0;
+    #endif
 }
 
 
