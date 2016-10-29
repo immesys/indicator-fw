@@ -1,8 +1,7 @@
 
-#include "nio.h"
 #include "lib.h"
 #include <stdint.h>
-
+#include <stdio.h>
 #if 0
 static const uint8_t quadrant_data1 = [
   0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3,
@@ -44,8 +43,8 @@ void lerp(lerp_param *p, uint8_t nparams)
 {
   led_t last_color = p[0].color;
   uint32_t last_index = 0;
-  led_t next_color = {0,0,0};
-  uint32_t next_index = NLEDS*2;
+  led_t next_color = p[0].color;
+  uint32_t next_index = 0;
 
   int paramindex = 0;
   for (int i = 0; i < 2*NLEDS; i++) {
@@ -56,6 +55,7 @@ void lerp(lerp_param *p, uint8_t nparams)
       next_color = p[paramindex].color;
       next_index = p[paramindex].idx;
     }
+    printf("nxi = %d, lxi = %d\n", next_index, last_index);
     uint8_t r = last_color.r + ((next_color.r - last_color.r)*(i-last_index))/(next_index-last_index);
     uint8_t g = last_color.g + ((next_color.g - last_color.g)*(i-last_index))/(next_index-last_index);
     uint8_t b = last_color.b + ((next_color.b - last_color.b)*(i-last_index))/(next_index-last_index);

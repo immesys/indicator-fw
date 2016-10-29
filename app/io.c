@@ -1,4 +1,4 @@
-
+#if 0
 #include "irq.h"
 #include "periph_conf.h"
 #include "periph_cpu.h"
@@ -20,6 +20,11 @@ static inline void delay_jiffy(uint32_t amt) {
   while(--amt) {
     asm("");
   }
+}
+
+inline void pinNop(void)  __attribute__((always_inline));
+inline void pinNop(void) {
+  *setreg = 0x40000;
 }
 inline void pin1h(void) __attribute__((always_inline));
 inline void pin1h(void) {
@@ -57,6 +62,7 @@ inline void delay450(void)
   asm volatile("nop");
   asm volatile("nop");
 }
+
 inline void delay400(void)  __attribute__((always_inline));
 inline void delay400(void)
 {
@@ -76,6 +82,12 @@ inline void delay400(void)
   asm volatile("nop");
   asm volatile("nop");
 
+  //added with memory
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
+  asm volatile("nop");
   //delay_jiffy(20);
 }
 
@@ -86,9 +98,13 @@ inline void dobit(uint8_t mask, uint8_t b1, uint8_t b2){
   delay400();
   if ((b1 & mask) == 0) {
     pin1l();
+  } else {
+    pinNop();
   }
   if ((b2 & mask) == 0) {
     pin2l();
+  } else {
+    pinNop();
   }
   delay400();
   pin1l();
@@ -801,3 +817,5 @@ void nmain(void)
   }
 }
 }
+
+#endif
